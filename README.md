@@ -7,9 +7,9 @@ Welcome to my Full Stack Dev. exercise repository! Here, you'll find all the exe
 ## Repository Structure
 
 ├── part0
-│ ├──0.4: New note diagram
-│ ├──0.5: Single page app diagram  
-│ └──0.6: New note in Single page app diagram  
+│ ├──0.4 New note diagram
+│ ├──0.5 Single page app diagram  
+│ └──0.6 New note in Single page app diagram  
 │
 ├── part1
 │ ├──courseinfo
