@@ -6,13 +6,23 @@ Welcome to my Full Stack Dev. exercise repository! Here, you'll find all the exe
 
 ## Repository Structure
 
-/
-├── Part-1/ # Exercises for Part 1 of the course  
-│ ├── exercise-1/ # Exercise 1 folder  
-│ ├── exercise-2/ # Exercise 2 folder  
-│ └── ...  
-├── Part-2/ # Exercises for Part 2  
-│ ├── exercise-1/  
-│ └── ...  
-├── ...  
+├── part0
+│ ├──0.4: New note diagram
+│ ├──0.5: Single page app diagram  
+│ └──0.6: New note in Single page app diagram  
+│
+├── part1
+│ ├──courseinfo
+│ ├──unicafe
+│ └──anecdotes
+│
+├── part2
+│ ├──courseinfo
+│ ├──phonebook  
+│ └──countries  
+│
+├── part3
+│ ├──
+│ └──
+│
 └── README.md # This file
