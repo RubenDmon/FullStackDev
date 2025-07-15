@@ -13,7 +13,7 @@ Welcome to my Full Stack Open exercise repository! Here, you'll find all the exe
 │ └──0.6 New note in Single page app diagram.png
 │
 ├── part1
-│ ├──courseInformation 1.1 and 1.2
+│ ├──courseInformation 1.3 and 1.5
 │
 └── README.md # This file
 ```
