@@ -17,5 +17,7 @@ Welcome to my Full Stack Open exercise repository! Here, you'll find all the exe
 │ ├──unicafe 1.6 and 1.11
 │ ├──anecdotes 1.12 and 1.14
 │
+├── part2
+│ ├──courseInformation 2.1 and 2.5
 └── README.md # This file
 ```
