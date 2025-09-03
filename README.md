@@ -19,5 +19,6 @@ Welcome to my Full Stack Open exercise repository! Here, you'll find all the exe
 │
 ├── part2
 │ ├──courseInformation 2.1 and 2.5
+│ ├──phonebook 2.6 and 2.10
 └── README.md # This file
 ```
