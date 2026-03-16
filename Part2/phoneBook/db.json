@@ -1,11 +1,6 @@
 {
   "persons": [
     {
-      "id": "a092",
-      "name": "daniel",
-      "number": "355"
-    },
-    {
       "id": "d7ca",
       "name": "david",
       "number": "465"
@@ -24,6 +19,21 @@
       "id": "a086",
       "name": "daksjd",
       "number": "465"
+    },
+    {
+      "id": "bf01",
+      "name": "davis",
+      "number": "24432"
+    },
+    {
+      "id": "4978",
+      "name": "fds",
+      "number": "324"
+    },
+    {
+      "id": "e71c",
+      "name": "daniel",
+      "number": "0323"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
