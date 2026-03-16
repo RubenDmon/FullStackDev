@@ -1,5 +1,7 @@
 import Course from "./components/Courses"
 import Sum from "./components/Sum"
+
+
 const App = () => {
   const courses = [
     {
