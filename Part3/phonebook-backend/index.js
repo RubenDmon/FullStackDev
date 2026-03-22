@@ -1,7 +1,12 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
+
+
 const app = express()
 app.use(express.json())
+app.use(cors())
+app.use(express.static('dist'))
 
 //  Ejercicio 3.8: Creamos un token personalizado llamado 'postData'
 morgan.token('postData', (request) => {
@@ -113,7 +118,8 @@ app.post('/api/persons', (request, response) => {
   // Respondemos devolviendo el objeto recién creado
   response.json(newPerson)
 })
-const PORT = 3002
+
+const PORT = process.env.PORT || 3002
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
