@@ -55,38 +55,88 @@ app.post('/api/persons', (request, response) => {
 })
 
 // ==========================================
-// RUTAS TEMPORALES (Aún no usan MongoDB - Las actualizaremos luego)
+// RUTAS CONECTADAS A MONGODB (Ejercicios 3.15 - 3.18)
 // ==========================================
 
-app.get('/info', (request, response) => {
-  // ATENCIÓN: Por ahora esto contará las personas en MongoDB
-  Person.find({}).then(persons => {
-    const numberOfPeople = persons.length
-    const currentDate = new Date()
-    const infoTemplate = `
-      <p>Phonebook has info for ${numberOfPeople} people</p>
-      <p>${currentDate}</p>
-    `
-    response.send(infoTemplate)
-  })
+// Ejercicio 3.18: Ruta /info conectada a MongoDB
+app.get('/info', (request, response, next) => {
+  Person.countDocuments({})
+    .then(count => {
+      const currentDate = new Date()
+      const infoTemplate = `
+        <p>Phonebook has info for ${count} people</p>
+        <p>${currentDate}</p>
+      `
+      response.send(infoTemplate)
+    })
+    .catch(error => next(error))
 })
 
-// Obtener un solo contacto (aún usa lógica vieja, fallará si le pasas un ID de Mongo)
-app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  response.status(404).json({ error: 'This route is not connected to MongoDB yet' })
+// Ejercicio 3.18: Obtener un solo contacto por ID de Mongo
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end() // El ID tiene buen formato, pero no existe
+      }
+    })
+    .catch(error => next(error)) // Si el ID tiene mal formato, pasa al Error Handler
 })
 
-// Eliminar un contacto (aún usa lógica vieja)
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  response.status(404).json({ error: 'This route is not connected to MongoDB yet' })
+// Ejercicio 3.15: Eliminar un contacto de MongoDB
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
+
+// Ejercicio 3.17: Actualizar un contacto existente
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  }
+
+  // { new: true } es crucial para que Mongoose nos devuelva el objeto YA actualizado
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
+})
+// ==========================================
+// MIDDLEWARES DE CONTROL (Deben ir al final)
+// ==========================================
+
+// 1. Manejador de endpoints desconocidos (Si el usuario pide una ruta que no existe)
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+app.use(unknownEndpoint)
+
+// 2. Ejercicio 3.16: Manejador centralizado de errores
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  // Si el error es por un ID mal formateado de MongoDB
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  // Si es otro tipo de error, lo pasamos al manejador por defecto de Express
+  next(error)
+}
+app.use(errorHandler)
 
 // ==========================================
 // INICIO DEL SERVIDOR
 // ==========================================
-
 const PORT = process.env.PORT || 3002
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
