@@ -23,7 +23,7 @@ Welcome to my Full Stack Open exercise repository! Here, you'll find all the exe
 │ ├──countryBook
 │ │ ├──countries 2.18 - 2.20
 ├── part3
-│ ├──phonebook-backend 3.1 and 3.6
+│ ├──phonebook-backend 3.12
 │ ├── https://fullstackdep.onrender.com/ 
 └── README.md # This file
 ```
