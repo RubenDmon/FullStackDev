@@ -21,6 +21,6 @@ Welcome to my Full Stack Open exercise repository! Here, you'll find all the exe
 │ ├──courseInformation 2.1 and 2.5
 │ ├──phonebook 2.16-2.17
 │ ├──countryBook
-│ │ ├──countries
+│ │ ├──countries 2.18 - 2.20
 └── README.md # This file
 ```
