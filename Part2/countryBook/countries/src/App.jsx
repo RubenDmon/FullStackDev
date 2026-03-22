@@ -1,28 +1,30 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-// Componente para mostrar la lista o los detalles del país
-const Countries = ({ countries }) => {
-  // Si no hay búsqueda o no hay resultados, no mostramos nada
+// 1. Recibimos una nueva prop: handleShow
+const Countries = ({ countries, handleShow }) => {
   if (countries.length === 0) return null
 
-  // Si hay más de 10 resultados
   if (countries.length > 10) {
     return <div>Too many matches, specify another filter</div>
   }
 
-  // Si hay entre 2 y 10 resultados (lista simple)
+  // 2. Modificamos la lista para incluir el botón
   if (countries.length > 1 && countries.length <= 10) {
     return (
       <ul>
         {countries.map(country => (
-          <li key={country.name.common}>{country.name.common}</li>
+          <li key={country.name.common}>
+            {country.name.common} 
+            <button onClick={() => handleShow(country.name.common)}>
+              show
+            </button>
+          </li>
         ))}
       </ul>
     )
   }
 
-  // Si hay exactamente 1 resultado (vista detallada)
   const country = countries[0]
   
   return (
@@ -33,7 +35,6 @@ const Countries = ({ countries }) => {
       
       <h3>languages:</h3>
       <ul>
-        {/* Los idiomas vienen como un objeto, así que usamos Object.values para extraerlos en un array */}
         {Object.values(country.languages).map(language => (
           <li key={language}>{language}</li>
         ))}
@@ -52,7 +53,6 @@ const App = () => {
   const [search, setSearch] = useState('')
   const [countries, setCountries] = useState([])
 
-  // useEffect para obtener TODOS los países al inicio
   useEffect(() => {
     axios
       .get('https://studies.cs.helsinki.fi/restcountries/api/all')
@@ -65,7 +65,11 @@ const App = () => {
     setSearch(event.target.value)
   }
 
-  // Filtramos la lista de países basada en la búsqueda actual
+  // 3. Creamos la función que actualizará el buscador al hacer clic
+  const handleShow = (name) => {
+    setSearch(name)
+  }
+
   const filteredCountries = search
     ? countries.filter(country => 
         country.name.common.toLowerCase().includes(search.toLowerCase())
@@ -78,7 +82,7 @@ const App = () => {
         find countries <input value={search} onChange={handleSearchChange} />
       </div>
       
-      <Countries countries={filteredCountries} />
+      <Countries countries={filteredCountries} handleShow={handleShow} />
     </div>
   )
 }
