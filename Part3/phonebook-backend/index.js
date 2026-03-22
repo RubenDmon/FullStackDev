@@ -88,7 +88,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 // Ejercicio 3.15: Eliminar un contacto de MongoDB
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -96,15 +96,14 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 // Ejercicio 3.17: Actualizar un contacto existente
 app.put('/api/persons/:id', (request, response, next) => {
-  const body = request.body
+  const { name, number } = request.body
 
-  const person = {
-    name: body.name,
-    number: body.number,
-  }
-
-  // { new: true } es crucial para que Mongoose nos devuelva el objeto YA actualizado
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  // runValidators: true obliga a Mongoose a revisar las reglas (minLength, regex, etc.)
+  Person.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  )
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
@@ -124,12 +123,13 @@ app.use(unknownEndpoint)
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
-  // Si el error es por un ID mal formateado de MongoDB
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } 
+  } else if (error.name === 'ValidationError') {
+    // Si Mongoose lanza un error de validación, respondemos con el mensaje específico
+    return response.status(400).json({ error: error.message })
+  }
 
-  // Si es otro tipo de error, lo pasamos al manejador por defecto de Express
   next(error)
 }
 app.use(errorHandler)

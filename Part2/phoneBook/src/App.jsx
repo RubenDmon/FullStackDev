@@ -36,7 +36,7 @@ const App = () => {
   const handleInputNumberChange = (event) => setNewNumber(event.target.value)
   const handleInputSearchChange = (event) => setSearch(event.target.value)
 
-  const handleAddPerson = event => {
+const handleAddPerson = event => {
     event.preventDefault()
     
     const existingPerson = persons.find(
@@ -57,16 +57,16 @@ const App = () => {
             setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson))
             setNewName('')
             setNewNumber('')
-            showNotification(`Updated ${returnedPerson.name}'s number`) // Notificación de éxito
+            showNotification(`Updated ${returnedPerson.name}'s number`)
           })
           .catch(error => {
-            // Ejercicio 2.17: Manejo del error si la persona ya fue eliminada del servidor
-            showNotification(
-              `Information of ${existingPerson.name} has already been removed from server`,
-              'error'
-            )
-
-            setPersons(persons.filter(p => p.id !== existingPerson.id))
+            // Verificamos si es un error de validación del backend o si la persona fue borrada
+            if (error.response && error.response.data && error.response.data.error) {
+              showNotification(error.response.data.error, 'error')
+            } else {
+              showNotification(`Information of ${existingPerson.name} has already been removed from server`, 'error')
+              setPersons(persons.filter(p => p.id !== existingPerson.id))
+            }
           })
       }
     } else {
@@ -81,7 +81,12 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
-          showNotification(`Added ${returnedPerson.name}`) // Notificación de éxito
+          showNotification(`Added ${returnedPerson.name}`) 
+        })
+        .catch(error => {
+          // AQUÍ ATRAPAMOS EL ERROR DE VALIDACIÓN AL CREAR
+          // Mostramos el mensaje de Mongoose en nuestro cuadro de notificación rojo
+          showNotification(error.response.data.error, 'error')
         })
     }
   }
