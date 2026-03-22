@@ -1,7 +1,64 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-// 1. Recibimos una nueva prop: handleShow
+// 1. Nuevo componente exclusivo para mostrar 1 país y su clima
+const CountryDetail = ({ country }) => {
+  const [weather, setWeather] = useState(null)
+  
+  // Obtenemos la llave de las variables de entorno de Vite
+  const api_key = import.meta.env.VITE_SOME_KEY
+
+  useEffect(() => {
+    // Algunos países tienen múltiples capitales, tomamos la primera
+    const capital = country.capital[0] 
+    
+    // Hacemos la petición a OpenWeatherMap (units=metric es para Celsius)
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&units=metric&appid=${api_key}`)
+      .then(response => {
+        setWeather(response.data)
+      })
+      .catch(error => {
+        console.log("Error fetching weather:", error)
+      })
+  }, [country.capital, api_key]) // El efecto se ejecuta cuando cambia el país
+
+  return (
+    <div>
+      <h1>{country.name.common}</h1>
+      <div>capital {country.capital.join(', ')}</div>
+      <div>area {country.area}</div>
+      
+      <h3>languages:</h3>
+      <ul>
+        {Object.values(country.languages).map(language => (
+          <li key={language}>{language}</li>
+        ))}
+      </ul>
+      
+      <img 
+        src={country.flags.png} 
+        alt={`Flag of ${country.name.common}`} 
+        width="150" 
+      />
+
+      {/* 2. Solo mostramos la sección del clima cuando los datos hayan cargado */}
+      {weather && (
+        <div>
+          <h2>Weather in {country.capital[0]}</h2>
+          <div>temperature {weather.main.temp} Celcius</div>
+          <img 
+            src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} 
+            alt="weather icon" 
+          />
+          <div>wind {weather.wind.speed} m/s</div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// El componente Countries ahora es más limpio
 const Countries = ({ countries, handleShow }) => {
   if (countries.length === 0) return null
 
@@ -9,7 +66,6 @@ const Countries = ({ countries, handleShow }) => {
     return <div>Too many matches, specify another filter</div>
   }
 
-  // 2. Modificamos la lista para incluir el botón
   if (countries.length > 1 && countries.length <= 10) {
     return (
       <ul>
@@ -25,28 +81,8 @@ const Countries = ({ countries, handleShow }) => {
     )
   }
 
-  const country = countries[0]
-  
-  return (
-    <div>
-      <h1>{country.name.common}</h1>
-      <div>capital {country.capital}</div>
-      <div>area {country.area}</div>
-      
-      <h3>languages:</h3>
-      <ul>
-        {Object.values(country.languages).map(language => (
-          <li key={language}>{language}</li>
-        ))}
-      </ul>
-      
-      <img 
-        src={country.flags.png} 
-        alt={`Flag of ${country.name.common}`} 
-        width="150" 
-      />
-    </div>
-  )
+  // 3. Cuando hay 1 solo resultado, renderizamos nuestro nuevo componente
+  return <CountryDetail country={countries[0]} />
 }
 
 const App = () => {
@@ -61,14 +97,8 @@ const App = () => {
       })
   }, [])
 
-  const handleSearchChange = (event) => {
-    setSearch(event.target.value)
-  }
-
-  // 3. Creamos la función que actualizará el buscador al hacer clic
-  const handleShow = (name) => {
-    setSearch(name)
-  }
+  const handleSearchChange = (event) => setSearch(event.target.value)
+  const handleShow = (name) => setSearch(name)
 
   const filteredCountries = search
     ? countries.filter(country => 
@@ -81,7 +111,6 @@ const App = () => {
       <div>
         find countries <input value={search} onChange={handleSearchChange} />
       </div>
-      
       <Countries countries={filteredCountries} handleShow={handleShow} />
     </div>
   )
